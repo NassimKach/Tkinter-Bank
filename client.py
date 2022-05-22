@@ -4,6 +4,7 @@ import config
 import json
 import client_services
 
+
 with open("data\\clients.json", "r") as f:
     data = json.load(f)
 
