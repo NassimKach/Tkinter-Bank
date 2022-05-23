@@ -7,8 +7,6 @@ import json
 with open("data\\client.json", "r") as f:
     client_data = json.load(f)
 
-# def retirer_argent_command():
-
 
 def client_services_func():
     client_frame.place_forget()
@@ -55,20 +53,46 @@ def entrer_client_btn_clicked():
 
 
 def afficher_solde_func():
+    afficher_sold_text.configure(text="")
     for i in client_data:
         if i["nom"] == nom:
-            afficher_sold_text.configure(text=f"Votre solde est de {i['sold']}€",
-                                         text_color="white",
-                                         text_font=("Poppins", "20"))
+            afficher_sold_text.configure(text=f"Votre solde est de {i['sold']} Dh",
+                                         text_color="white")
             return
 
 
-# def retirer_argent_func():
-#     for i in client_data:
-#         if i["nom"] == nom:
-#             i["sold"] -= int(retirer_argent_entry.get())
-#             afficher_solde_func()
-#             return
+def verser_argent_command():
+    argent_retirer_button.place_forget()
+    argent_retirer_entry.place_forget()
+    argent_verser_entry.place(relx=0.6, rely=0.3, anchor=tkinter.CENTER)
+    argent_verser_button.place(relx=0.6, rely=0.4, anchor=tkinter.CENTER)
+
+
+def retirer_argent_command():
+    argent_verser_button.place_forget()
+    argent_retirer_entry.place(relx=0.6, rely=0.3, anchor=tkinter.CENTER)
+    argent_retirer_button.place(relx=0.6, rely=0.4, anchor=tkinter.CENTER)
+
+
+def verser_argent_func():
+    for i in client_data:
+        if i["nom"] == nom:
+            i["sold"] = i["sold"] + int(argent_verser_entry.get())
+            afficher_solde_func()
+            return
+
+
+def retirer_argent_func():
+    for i in client_data:
+        if i["nom"] == nom:
+            if i["sold"] - int(argent_retirer_entry.get()) < 0:
+                showerror.configure(text="Vous n'avez pas assez d'argent",
+                                    text_color="red")
+                return
+            else:
+                i["sold"] = i["sold"] - int(argent_retirer_entry.get())
+                afficher_solde_func()
+                return
 
 
 def client_page():
@@ -96,10 +120,10 @@ afficher_sold.place(relx=0.13, rely=0.3, anchor=tkinter.CENTER)
 
 afficher_sold_text = customtkinter.CTkLabel(client_services_frame,
                                             text="",
-                                            text_font=("Poppins", "12"),
+                                            text_font=("Poppins", "18"),
                                             text_color="white"
                                             )
-afficher_sold_text.place(relx=0.5, rely=0.3, anchor=tkinter.CENTER)
+afficher_sold_text.place(relx=0.6, rely=0.5, anchor=tkinter.CENTER)
 
 retirer_btn = customtkinter.CTkButton(client_services_frame,
                                       corner_radius=0,
@@ -107,7 +131,7 @@ retirer_btn = customtkinter.CTkButton(client_services_frame,
                                       height=50,
                                       text="Retirer d'argent",
                                       text_font=("Poppins", "12"),
-                                    #   command=retirer_argent_command
+                                      command=retirer_argent_command
                                       )
 retirer_btn.place(relx=0.13, rely=0.4, anchor=tkinter.CENTER)
 
@@ -117,7 +141,9 @@ verser_btn = customtkinter.CTkButton(client_services_frame,
                                      width=250,
                                      height=50,
                                      text="Verser d'argent",
-                                     text_font=("Poppins", "12")
+                                     text_font=("Poppins", "12"),
+                                     command=verser_argent_command
+
                                      )
 verser_btn.place(relx=0.13, rely=0.5, anchor=tkinter.CENTER)
 
@@ -188,9 +214,36 @@ showerror = customtkinter.CTkLabel(client_frame,
                                    )
 showerror.pack(pady=20)
 
-argent_retirer_entry = customtkinter.CTkEntry(client_frame,
+argent_retirer_entry = customtkinter.CTkEntry(client_services_frame,
                                               placeholder_text="Montant à retirer",
-                                              width=300,
+                                              width=500,
                                               text_font=("Poppins", "10"),
                                               fg_color="gray10",
                                               )
+argent_retirer_button = customtkinter.CTkButton(client_services_frame,
+                                                text="Retirer",
+                                                text_font=(
+                                                    "Poppins", "12", "bold"),
+                                                bg="gray10",
+                                                command=retirer_argent_func
+                                                )
+
+showerror = customtkinter.CTkLabel(client_services_frame,
+                                   text="",
+                                   text_font=("Poppins", "10"),
+                                   )
+showerror.place(relx=0.6, rely=0.6, anchor=tkinter.CENTER)
+
+argent_verser_entry = customtkinter.CTkEntry(client_services_frame,
+                                             placeholder_text="Montant à verser",
+                                             width=500,
+                                             text_font=("Poppins", "10"),
+                                             fg_color="gray10",
+                                             )
+argent_verser_button = customtkinter.CTkButton(client_services_frame,
+                                               text="Verser",
+                                               text_font=(
+                                                    "Poppins", "12", "bold"),
+                                               bg="gray10",
+                                               command=verser_argent_func
+                                               )
