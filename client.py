@@ -2,16 +2,33 @@ import tkinter
 import customtkinter
 import config
 import json
-import client_services
 
 
-with open("data\\clients.json", "r") as f:
-    data = json.load(f)
+with open("data\\client.json", "r") as f:
+    client_data = json.load(f)
+
+# def retirer_argent_command():
+
+
+def client_services_func():
+    client_frame.place_forget()
+    client_services_frame.place(relx=0.5, rely=0.5, anchor=tkinter.CENTER)
+    bnj_text = customtkinter.CTkLabel(client_services_frame,
+                                      text=f"Bonjour {nom} dans le menu de client",
+                                      text_color="white",
+                                      )
+    bnj_text.place(relx=0.5, rely=0.1, anchor=tkinter.CENTER)
+
+
+def quitter_btn_command():
+    client_services_frame.place_forget()
+    client_frame.place(relx=0.5, rely=0.5, anchor=tkinter.CENTER)
 
 
 def entrer_client_btn_clicked():
     # Get the values from the entries
-    showerror.configure(text="")
+    global nom
+
     nom = nom_entry.get()
     mpc = mpc_entry.get()
 
@@ -28,13 +45,30 @@ def entrer_client_btn_clicked():
                             text_color="red")
         return
 
-    for i in data:
+    for i in client_data:
         if i["nom"] == nom and i["mot de passe"] == mpc:
-            client_services.client_services_func()
+            client_services_func()
             return
 
     showerror.configure(text="Nom ou mot de passe incorrect",
                         text_color="red")
+
+
+def afficher_solde_func():
+    for i in client_data:
+        if i["nom"] == nom:
+            afficher_sold_text.configure(text=f"Votre solde est de {i['sold']}€",
+                                         text_color="white",
+                                         text_font=("Poppins", "20"))
+            return
+
+
+# def retirer_argent_func():
+#     for i in client_data:
+#         if i["nom"] == nom:
+#             i["sold"] -= int(retirer_argent_entry.get())
+#             afficher_solde_func()
+#             return
 
 
 def client_page():
@@ -45,6 +79,57 @@ def client_page():
 def retour_menu():
     client_frame.place_forget()
     config.menu_frame.place(relx=0.5, rely=0.5, anchor=tkinter.CENTER)
+
+
+client_services_frame = customtkinter.CTkFrame(
+    width=900, height=600, bg="gray10")
+
+afficher_sold = customtkinter.CTkButton(client_services_frame,
+                                        corner_radius=0,
+                                        width=250,
+                                        height=50,
+                                        text="Afficher le solde",
+                                        text_font=("Poppins", "12"),
+                                        command=afficher_solde_func
+                                        )
+afficher_sold.place(relx=0.13, rely=0.3, anchor=tkinter.CENTER)
+
+afficher_sold_text = customtkinter.CTkLabel(client_services_frame,
+                                            text="",
+                                            text_font=("Poppins", "12"),
+                                            text_color="white"
+                                            )
+afficher_sold_text.place(relx=0.5, rely=0.3, anchor=tkinter.CENTER)
+
+retirer_btn = customtkinter.CTkButton(client_services_frame,
+                                      corner_radius=0,
+                                      width=250,
+                                      height=50,
+                                      text="Retirer d'argent",
+                                      text_font=("Poppins", "12"),
+                                    #   command=retirer_argent_command
+                                      )
+retirer_btn.place(relx=0.13, rely=0.4, anchor=tkinter.CENTER)
+
+
+verser_btn = customtkinter.CTkButton(client_services_frame,
+                                     corner_radius=0,
+                                     width=250,
+                                     height=50,
+                                     text="Verser d'argent",
+                                     text_font=("Poppins", "12")
+                                     )
+verser_btn.place(relx=0.13, rely=0.5, anchor=tkinter.CENTER)
+
+quitter_btn = customtkinter.CTkButton(client_services_frame,
+                                      corner_radius=0,
+                                      width=250,
+                                      height=50,
+                                      text="Quitter",
+                                      text_font=("Poppins", "12"),
+                                      command=quitter_btn_command
+                                      )
+quitter_btn.place(relx=0.13, rely=0.6, anchor=tkinter.CENTER)
 
 
 client_frame = customtkinter.CTkFrame(
@@ -102,3 +187,10 @@ showerror = customtkinter.CTkLabel(client_frame,
                                    text_font=("Poppins", "12"),
                                    )
 showerror.pack(pady=20)
+
+argent_retirer_entry = customtkinter.CTkEntry(client_frame,
+                                              placeholder_text="Montant à retirer",
+                                              width=300,
+                                              text_font=("Poppins", "10"),
+                                              fg_color="gray10",
+                                              )
